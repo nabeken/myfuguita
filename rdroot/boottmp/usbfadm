@@ -1,0 +1,616 @@
+#!/bin/sh
+
+#set -x
+#set -e
+
+#========================================
+#
+# usbfadm - USB Flash drive ADMinistration tool
+# KAWAMATA, Yoshihiro / kaw@on.rim.or.jp
+#
+#========================================
+
+# Copyright (c) 2006--2012
+# Yoshihiro Kawamata
+#
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#   * Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in
+#     the documentation and/or other materials provided with the
+#     distribution.
+# 
+#   * Neither the name of Yoshihiro Kawamata nor the names of its
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+trap 'rm -rf /tmp/usbfadm.lock /tmp/rl_words' EXIT
+
+if mkdir /tmp/usbfadm.lock 2>/dev/null; then
+    if [ ! `id -un` = root ]; then
+        echo "$0 must be run as a root."
+        exit
+    fi
+else
+    echo "another $0 running"
+    exit
+fi
+
+fuguita_sys_mb=700
+
+#-------------------
+# Wait for ENTER key pressed
+# outputs results to stdout
+#
+#     usage: wait_enter prompt
+#
+#       output ... 1: ENTER key pressed
+#                 -1: Key pressed but not ENTER
+#                 -2: Error occured
+#
+function wait_enter {
+    typeset prompt="$1"
+    typeset line
+
+    echo -n "$prompt -> " >&2; read line
+
+    if [ X"$line" = X ]; then
+        echo 1
+    else
+        echo -1
+    fi
+}
+
+#-------------------
+# ask user yes or no
+# outputs answer to stdout
+#
+#     usage: ask_yn prompt yn
+#
+#       yn ... y: defaults to yes
+#              n: defaults to no
+#              r: no default ... ask again
+#              else: no default ... return -1 if answered not yn
+#
+#       output ... 1: yes, 0: no, -1: else yn, -2: error occured
+#
+function ask_yn {
+
+    if [ -z "$2" ]; then
+        echo -2 >&2
+        return
+    fi
+
+    typeset prompt="$1"; shift
+    typeset yn_default="$1"; shift
+    typeset yn_ans
+
+    case X"$yn_default"X in
+        X[Yy]X) yn_default=Y; prompt="$prompt [Y/n] -> " ;;
+        X[Nn]X) yn_default=N; prompt="$prompt [y/N] -> " ;;
+        X[Rr]X) yn_default=R; prompt="$prompt [y/n] -> " ;;
+        *)      yn_default=E; prompt="$prompt [y/n] -> " ;;
+    esac
+
+    while :; do
+        echo -n "$prompt" >&2; read yn_ans
+
+        case X"$yn_ans"X in
+            X[Yy]X) echo 1; return;;
+            X[Nn]X) echo 0; return;;
+            XX)
+                case X"$yn_default"X in
+                    XYX) echo 1;  return;;
+                    XNX) echo 0;  return;;
+                    XRX) continue;;
+                    *)   echo -1; return;;
+                esac;;
+            *)
+                continue;;
+        esac
+    done
+}
+
+#-------------------
+# read user's input with readline functionality
+# outputs echoed to stdout
+#
+#     usage: rl_wread prompt-str default-str [completion words ....]
+#
+function rl_wread {
+    typeset prompt="$1";  shift
+    typeset default="$1"; shift
+
+    if [ -x /usr/local/bin/rlwrap ]; then
+        echo "$@" > /tmp/rl_words
+        rlwrap -b '' \
+               -f /tmp/rl_words \
+               -P "$default" \
+               sh -f -c 'echo -n "'"$prompt"' --> " >&2 ; read w || echo EOF; echo $w' || echo RL_ERR
+    else
+        #-------------------
+        # fallback to dumb input
+        #
+        if [ X"$default" = X ]; then
+            echo -n "$prompt --> " >&2
+            read w
+        else
+            echo -n "$prompt [$default] --> " >&2
+            read w
+            if [ X"$w" = X ]; then
+              w="$default"
+            fi
+        fi
+        echo $w
+    fi
+}
+
+function notice {
+    echo ''
+    echo ========================================
+    echo = "$@"
+    echo =
+}
+
+#-------------------
+# scan specified disk
+# then outputs its parameters with form of sh var assignment
+#
+# Usage: eval `disk_scan disk`
+#
+function disk_scan {
+    [ -z "$1" ] && return
+    disklabel -c "$1" | awk '
+BEGIN {
+    paramfound = 0
+    print "scandev='"$1"'"
+}
+$1 == "bytes/sector:"  { sectsize=$2;   print "sectsize=" sectsize; paramfound++; }
+$1 == "sectors/track:" { print "sectstrack=" $2; paramfound++ }
+/^total sectors: /     { sectstotal=$3; print "sectstotal=" $3; paramfound++; }
+END {
+    if (paramfound==3) {
+        print "megstotal=" int(sectstotal*sectsize/1024/1024)
+        print "diskscan=ok"
+    } else
+        print "diskscan=ng"
+}'
+}
+
+#-------------------
+# fill specified disk with null data
+#
+# results of previous execution of disk_scan affects this.
+#
+function init_head {
+    notice Clearing MBR and BSD disklabel
+    [ "$diskscan" = ok ]  || return
+    [ "$1" = "$scandev" ] || return
+    dd if=/dev/zero of=/dev/r"$1"c bs=1024k count=1
+}
+
+#-------------------
+# prepare fdisk partition by given parameters
+#
+#     Usage: fdisk_init devname obsd-size fat-rest
+#
+# results of previous execution of disk_scan affects this.
+#
+function fdisk_init {
+    [ "$diskscan" = ok ]  || return
+    [ "$1" = "$scandev" ] || return
+    shift; obsdsize="$1"; [ X"$1" = X ] && return
+    shift;  fatrest="$1"
+
+    notice Setting up MBR
+    fdisk -iy "$scandev"
+    [ X"$obsdsize" = 'X*' ] && return
+    fdisk -e "$scandev" <<EOT
+e 3
+A6
+n
+
+`echo $obsdsize \* 1024 \* 1024 / $sectsize | bc`
+w
+p
+q
+EOT
+    eval `fdisk "$scandev" | awk '/^\*3: A6.*OpenBSD     $/ { print "obsdstart=" 0+$11; print "obsdsize=" $12 }'`
+    [ X"$fatrest" = Xfatrest ] || return
+    fdisk -e "$scandev" <<EOT
+e 0
+6
+n
+`echo $obsdstart + $obsdsize | bc`
+*
+w
+p
+q
+EOT
+    newfs_msdos /dev/r${scandev}i
+}
+
+#-------------------
+# make specified usb devices for FuguIta
+#
+#     usage: setup_fs dev ["sys"]
+#
+# dev has the form like 'sd6' .
+#
+# With "sys", partition a is prepared and
+# FuguIta system will be copied.
+#
+function setup_fs {
+    [ "$diskscan" = ok ]  || return
+    [ "$1" = "$scandev" ] || return
+
+    [ 0 = `expr "$scandev" : '^[sw]d[0-9]$'` ] && return
+
+    typeset sys
+    if [ X"$2" = Xsys ]; then
+        sys=YES
+    else
+        sys=NO
+    fi
+
+    notice Setting up disklabel and FFS partitions
+    if [ X$sys = XYES ]; then
+        disklabel -c -E ${scandev} <<EOT
+a a
+
+${fuguita_sys_mb}M
+
+a d
+
+*
+
+w
+q
+EOT
+        newfs -m0 -i$((${fuguita_sys_mb}*1024*1024/100)) /dev/r${scandev}a
+    else
+        disklabel -c -E ${scandev} <<EOT
+a d
+
+*
+
+w
+q
+EOT
+fi
+    echo ''
+    disklabel -c -pm ${scandev}
+    echo ''
+    newfs -m0 -i1024 -b4096 -f512 /dev/r${scandev}d
+
+    if [ X$sys = XYES ]; then
+        notice Copying FuguIta system files
+        mount -o async /dev/${scandev}a /mnt
+        cd /sysmedia
+        pax -rwvpe !(fuguita.ffsimg) /mnt
+
+        if [ -r /sysmedia/fuguita.ffsimg ]; then
+            notice Transferring filesystem image...
+            dd if=fuguita.ffsimg of=/mnt/fuguita.ffsimg bs=16m
+        fi
+
+        notice Installing boot loader
+        /usr/mdec/installboot -v /mnt/boot /usr/mdec/biosboot ${scandev}
+        umount /mnt
+    fi
+
+    notice Preparing partitions for user data
+    mount -o async /dev/${scandev}d /mnt
+    mkdir /mnt/livecd-config
+    cat <<EOT >/mnt/noasks
+#
+# noasks - parameter settings for non-interactive boot
+#
+# Make statements uncommented
+# to activate settings
+#
+#
+# FuguIta system device
+#noask_rdev='${scandev}a'
+#
+# mfs size in MB
+#noask_umem='32'
+#
+# boot mode
+#noask_setup_rw_mode='3'
+#
+# data set name in USB flash drive
+#noask_confdir='`hostname`'
+EOT
+    umount /mnt
+    echo done.
+
+    notice Checking filesystem consistency
+    [ X$sys = XYES ] && fsck -fy /dev/r${scandev}a
+    fsck -fy /dev/r${scandev}d
+}
+
+
+#-------------------
+# Active Code from HERE.
+#
+echo ''
+echo 'Welcome to usbfadm.'
+echo 'USB flash drive maintenance tool for FuguIta'
+echo ''
+
+#-------------------
+# initialization - read status files
+#
+if [ -r /boottmp/boot_mode ]; then
+    mode=`cat /boottmp/boot_mode`
+    echo "     Boot mode: $mode"
+fi
+
+if [ -r /boottmp/boot_restore_devname ]; then
+    devname=`cat /boottmp/boot_restore_devname`
+    echo "Data stored in: $devname"
+fi
+
+if [ -r /boottmp/boot_user_config ]; then
+    uconf=`cat /boottmp/boot_user_config`
+    echo " Data Saved as: $uconf"
+fi
+echo ''
+echo 'Type ? for help.'
+
+#-------------------
+# command loop
+#
+while :; do
+    #-------------------
+    # setup prompt string
+    #
+    d="${devname#/dev/}" ; [ -z "$devname" ] && d='?'
+    u="$uconf"           ; [ -z "$uconf" ]   && u='?'
+    echo ''
+    cmd=`rl_wread "$d : $u" '' quit bye exit sync info saveas target newdrive help ?`
+
+    set X $cmd
+
+    #-------------------
+    # process every command
+    #
+    case X"$2" in
+        #-------------------
+        # finish all
+        #
+        Xq|Xquit|Xbye|Xexit|XEOF|XRL_ERR)
+        echo ''
+        echo 'Bye bye...'
+        break;
+        ;;
+
+        #-------------------
+        # write back memory file system
+        # to USB flash drive
+        #
+        Xsync)
+        echo ''
+        if [ X"$devname" = X ]; then
+            echo "Name of device not set. Use 'target' to perform it."
+            continue
+        fi
+        if [ X"$uconf" = X ]; then
+            echo "Name of saving data not set. Use 'saveas' to perform it."
+            continue
+        fi
+
+        if [ 1 = `ask_yn "Sync current mfs as \\\`\\\`$uconf'' , OK?" n` ]; then
+            if mount -o async,noatime $devname /mnt; then
+                echo ''
+                echo "$devname" > /boottmp/boot_restore_devname
+                echo "$uconf"   > /boottmp/boot_user_config
+                rsync -avHx --delete --include '*/tmp' --exclude 'tmp/*' /mfs/. /mnt/livecd-config/$uconf
+                # find /mnt \! -type d \! -type f \! -type l -print | xargs rm -f
+                rm -rf /mnt/livecd-config/$uconf/tmp/{.??*,*}
+                umount $devname
+            fi
+        fi
+        ;;
+
+        #-------------------
+        # show status of USB flash drive
+        #
+        Xinfo)
+        if mount -r $devname /mnt; then
+            (cd /mnt/livecd-config && echo ''; df -hi /mnt; echo "\nscanning...\n"; du -sh *)
+            umount $devname
+        fi
+        ;;
+
+        #-------------------
+        # set data set name
+        # default is our FQDN.
+        #
+        Xsaveas)
+        if [ X"devname" != X ] && mount -r $devname /mnt; then
+            confs=`cd /mnt/livecd-config && echo *`
+            umount $devname
+        fi
+        [ X"$uconf" = X ] && uconf=`hostname`
+        uconf=`rl_wread "Name of saved data" $uconf $confs`
+        uconf=`echo $uconf | tr -cd 0-9A-Za-z.,_-+=:%@`  # strip invalid chars
+        echo ''
+        if [ X"$uconf" = X ]; then
+            echo "Unset the name of saving data"
+        else
+            echo "Your data will be saved as \`\`$uconf''."
+        fi
+        ;;
+
+        #-------------------
+        # search and set USB flash drive
+        #
+        Xtarget)
+        echo ''
+        echo 'Searching USB flash drives'
+        echo 'Please make sure the device inserted.'
+        [ `wait_enter 'Then press ENTER'` -lt 1 ] && continue
+
+        #-----------------------
+        # search partitions for saved data
+        #
+        devname=''
+        devnames=''
+        echo ''
+        for rdev in `sysctl -n hw.disknames|tr :, \\\012|grep '^[ws]d[0-9]$'`; do
+            if mount | grep -q "^/dev/${rdev}d" ; then
+                echo -n "($rdev) "
+                continue
+            fi
+
+            if mount -r /dev/${rdev}d /mnt 2>/dev/null ; then
+                if [ -d /mnt/livecd-config ]; then
+                    devname=${rdev}d
+                    devnames="$devnames ${rdev}d"
+                    echo -n "+$devname "
+                else
+                    echo -n "$rdev "
+                fi
+                umount /mnt
+            else
+                echo -n "$rdev "
+            fi
+        done
+        echo ''
+
+        if [ X"$devnames" = X ]; then
+            echo 'No device available for saving data'
+        else
+            devname=/dev/`rl_wread "target device" $devname $devnames`
+        fi
+        ;;
+
+        #-------------------
+        # make new FuguIta USB flash drive
+        #
+        Xnewdrive)
+        echo ''
+        if mount | grep -q '^\/dev\/[0-9a-z][0-9a-z]* on \/sysmedia type '
+        then
+            echo 'Please make sure the device inserted.'
+            [ `wait_enter 'Then press ENTER'` -lt 1 ] && continue
+        else
+            echo 'Sorry, cannot find /sysmedia.  You cannot do newdrive with this boot mode.'
+            continue
+        fi
+
+        echo ''
+        echo ==== FYI: sd[0-9] on syslog ================================
+        dmesg | sed -e '/^sd[0-9][0-9]*[ :]/!d; s/> .*/>/'
+        echo ============================================================
+        newdev=`rl_wread "Enter the name of device which FuguIta will be installed" "" \`sysctl -n hw.disknames|tr :, \\\\\012|grep '^[s]d[0-9]$'\``
+        [ 0 = `expr "$newdev" : '^[sw]d[0-9]$'` ] && continue
+        if mount|grep -q "^/dev/$newdev"; then
+            echo ''
+            echo -n "Error: $newdev is busy now."
+            echo ''
+            continue
+        fi
+
+        echo ''
+        fdisk $newdev || continue
+
+        if [ `fdisk $newdev | grep -c ' unused      $'` != 4 ]; then
+            echo ''
+            echo 'This disk seems to have been partitioned already.'
+            [ `ask_yn "Continue anyway?" n` -lt 1 ] && continue
+        fi
+
+        #-------------------
+        # Y means that partition a will be setup
+        # and write FuguIta system in it
+        #
+        echo ''
+        [ 1 -le `ask_yn "Do you make this USB flash drive bootable?" r` ] && inst=sys
+
+        eval `disk_scan $newdev`
+
+        #-------------------
+        # ask and calculate User's data area
+        # which is prepared as partition d
+        #
+        freepart_d=$megstotal
+        [ X"$inst" = Xsys ] && freepart_d=$(($freepart_d-${fuguita_sys_mb}))
+        echo ''
+        echo "Enter size for saving User Data in MB (${freepart_d}MB free)."
+        sizepart_d=`rl_wread "'*' implies all" '*'`
+
+        if [ 1 -lt `expr "X$sizepart_d" : '^X[1-9][0-9]*$'` ]; then
+            if [ $freepart_d -lt $sizepart_d ]; then
+                echo ''
+                echo 'Size too much.'
+                continue
+            fi
+        elif [ X"$sizepart_d" != 'X*' ]; then
+            echo ''
+            echo "${sizepart_d} ... What?"
+            continue
+        fi
+
+        echo ''
+        echo '***THIS IS THE LAST CHANCE***'
+        echo "If you type 'Y' now, all the data on $newdev will be lost."
+        [ `ask_yn "Are you sure to initialize $newdev?" n` -lt 1 ] && continue
+
+        #-------------------
+        # performing disk modifications
+        #
+        init_head $newdev
+        if [ X"$sizepart_d" != 'X*' -a X"$inst" = Xsys ]; then
+            fdisk_init $newdev $((${fuguita_sys_mb}+$sizepart_d)) fatrest
+        else
+            fdisk_init $newdev $sizepart_d fatrest
+        fi
+        setup_fs $newdev $inst
+        ;;
+
+        #-------------------
+        # null command
+        # ... only RET
+        X)
+        : # do nothing
+        ;;
+
+        #-------------------
+        # other strings are invalid
+        # then for help message
+        #
+        *)
+        echo ''
+        echo "Commands are;
+    target    -  set USB device for sync and info
+    saveas    -  set name of saving data
+    sync      -  sync current mfs to the target device
+    info      -  Show info on the target device
+    newdrive  -  make new FuguIta USB flash drive
+    bye, exit, quit
+              - end of this utility"
+        ;;
+    esac
+done

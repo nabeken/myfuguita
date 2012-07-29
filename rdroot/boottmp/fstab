@@ -1,0 +1,4 @@
+/dev/rd0a / ffs rw 0 0
+/dev/cd0a /sysmedia cd9660 ro 0 0
+/dev/vnd5a /fuguita ffs ro 0 0
+swap /mfs mfs rw,async,-b=4096,-f=512,-i=2673,-s=522240 0 0
