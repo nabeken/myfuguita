@@ -9,7 +9,7 @@ FuguIta works like a charm but only available for i386.
 To support amd64, the following works were made.
 
 - ported FuguIta build system to OpenBSD build system
-= build FuguIta with ``make release`` on OpenBSD amd64
+- build FuguIta with ``make release`` on OpenBSD amd64
 
 REQUIREMENTS
 ------------
