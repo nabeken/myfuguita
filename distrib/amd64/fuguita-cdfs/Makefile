@@ -4,12 +4,18 @@ TOP=	${.CURDIR}/..
 
 .include "${TOP}/Makefile.inc"
 
+VND=vnd1
+VND_DEV=/dev/${VND}a
+FUGUITA_FFSIMG_SIZE=600
+FUGUITA_FFSIMG=${MYFUGUITA_DIR}/fuguita.ffsimg
+FUGUITA_FFSIMG_MOUNT=/fuguita.ffsimg
+
 BSDRD=	bsd.rd
 CDROM=	fuguita${REV}.iso
 
 all: ${CDROM}
 
-${CDROM}:
+${CDROM}: fuguita.ffsimg
 	-rm -rf ${.OBJDIR}/cd-dir
 	mkdir -p ${.OBJDIR}/cd-dir/${OSREV}/amd64
 	mkdir -p ${.OBJDIR}/cd-dir/etc
@@ -26,6 +32,18 @@ ${CDROM}:
 	    -b ${OSREV}/amd64/cdbr -c ${OSREV}/amd64/boot.catalog \
 	    ${.OBJDIR}/cd-dir
 
+fuguita.ffsimg:
+	dd if=/dev/zero of=${FUGUITA_FFSIMG} bs=1M count=${FUGUITA_FFSIMG_SIZE}
+	vnconfig ${VND} ${FUGUITA_FFSIMG}
+	echo "a\n\n\n\n\nw\nq\n" | disklabel -E ${VND}
+	newfs ${VND}a
+	-mkdir ${FUGUITA_FFSIMG_MOUNT}
+	mount ${VND_DEV} ${FUGUITA_FFSIMG_MOUNT}
+	cd ${FUGUITA_FFSIMG_MOUNT}; ( cd ${DESTDIR}; tar cpf - . ) | tar xpf -
+	cd /
+	umount ${FUGUITA_FFSIMG_MOUNT}
+	vnconfig -u ${VND}
+
 .ifdef RELEASEDIR
 install:
 	cp ${CDROM} ${RELEASEDIR}
@@ -33,7 +51,10 @@ install:
 
 clean cleandir:
 	/bin/rm -f ${CDROM}
+	-vnconfig -u ${VND}
 	rm -rf cd-dir
+	rm -rf ${FUGUITA_FFSIMG}
+	rm -rf ${FUGUITA_FFSIMG_MOUNT}
 
 .include <bsd.obj.mk>
 .include <bsd.subdir.mk>
