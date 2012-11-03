@@ -1,0 +1,25 @@
+--- FUGUITA.MP.orig	Sat Nov  3 14:59:08 2012
++++ FUGUITA.MP	Sat Nov  3 15:00:35 2012
+@@ -24,7 +24,7 @@
+ 
+ option		NTFS		# NTFS support
+ 
+-config		bsd	swap generic
++config		bsd	root on rd0a swap on rd0b and wd0b and sd0b
+ 
+ mainbus0 at root
+ 
+@@ -597,3 +597,13 @@
+ # mouse & keyboard multiplexor pseudo-devices
+ pseudo-device	wsmux		2
+ pseudo-device	crypto		1
++
++# For FuguIta
++option		RAMDISK_HOOKS
++option		MINIROOTSIZE=4480
++option		PPPOE_TERM_UNKNOWN_SESSIONS
++option		MULTIPROCESSOR
++pseudo-device	rd	1	# ramdisk
++pseudo-device	vnd	6	# vnode disk devices
++
++cpu*		at mainbus?

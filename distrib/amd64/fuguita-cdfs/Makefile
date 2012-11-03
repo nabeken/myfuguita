@@ -17,7 +17,7 @@ ${CDROM}:
 	cp ${.OBJDIR}/../fuguita_cd/${BSDRD} ${.OBJDIR}/cd-dir/${OSREV}/amd64
 	cp ${DESTDIR}/usr/mdec/cdbr ${.OBJDIR}/cd-dir/${OSREV}/amd64
 	cp ${DESTDIR}/usr/mdec/cdboot ${.OBJDIR}/cd-dir/${OSREV}/amd64/cdboot
-	cp /root/myfuguita/fuguita.ffsimg ${.OBJDIR}/cd-dir/
+	cp ${MYFUGUITA_DIR}/fuguita.ffsimg ${.OBJDIR}/cd-dir/
 	mkhybrid -a -R -T -L -l -d -D -N -o ${.OBJDIR}/${CDROM} -v -v \
 	    -A "MyFuguIta ${OSREV} amd64 LiveCD" \
 	    -P "Copyright (c) `date +%Y`" \
