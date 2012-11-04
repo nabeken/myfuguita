@@ -8,65 +8,36 @@ FuguIta works like a charm but only available for i386.
 
 To support amd64, the following works were made.
 
-- ported FuguIta build system to OpenBSD build system
-- build FuguIta with ``make release`` on OpenBSD amd64
+- port FuguIta build system to OpenBSD build system
+- intergrate FuguIta with ``make release`` on OpenBSD amd64
 
 REQUIREMENTS
 ------------
 
-- OpenBSD running on amd64 x2 (build machine, base system for LiveCD)
+- OpenBSD running on amd64 x1
 - extracted source code (src.tar, sys.tar) in /usr/src
 - git
 
 SETTING UP BASE SYSTEM FOR LIVECD
 ---------------------------------
 
-If you have a base installation for LiveCD you can skip this section. If not
-You can install OpenBSD as the base installation.
+MyFuguIta now creates base image automatically based on ``/usr/dest``.
 
 SETTING UP BUILD SYSMTEM
 ------------------------
 
-.. _`memo: create disk image under openbsd`: http://westfox.livejournal.com/51329.html
-
 ::
 
+    build# cd /usr/src
+    build# tar zxpf /path/to/src.tar.gz
+    build# tar zxpf /path/to/sys.tar.gz
+    build# cd
     build# git clone git://github.com/nabeken/myfuguita.git
     build# cd myfuguita
 
-Create a disk image with the base installation prepared in the above. ::
-
-    build# dd if=/dev/zero of=fuguita.ffsimg bs=1M count=500
-    build# vnconfig vnd0 fuguita.ffsimg
-    build# fdisk -e vnd0
-    reinit
-    build# disklabel -E vnd0
-    a
-    w
-    build# newfs vnd0a
-    build# mkdir /fuguita.ffsimg
-    build# mount /dev/vnd0a /fuguita.ffsimg
-    build# /fuguita.ffsimg
-    build# ssh your-base-installation 'tar cpf - /' | tar xvpf -
-    or
-    build# ( cd /usr/dest; tar cpf - . ) | tar xvpf -
-    build# cd /
-    build# umount /fuguita.ffsimg; vnconfig -u vnd0
-
 Integrate FuguIta with OpenBSD build system. ::
 
-    build# cd /usr/src
-    build# cp -R /root/myfuguita/distrib .
-    build# cp -R /root/myfuguita/sys .
-    build# vi distrib/amd64/Makefile
-    // Add fuguita_cd, fuguita-cdfs to SUBDIR
-    SUBDIR= ramdisk_cd ramdiskA cdfs fuguita_cd fuguita-cdfs
-
-    // Add cd fuguita_cd; ${MAKE} unconfig to unconfig target
-    unconfig:
-            cd ramdisk_cd; ${MAKE} unconfig
-            cd ramdiskA; ${MAKE} unconfig
-            cd fuguita_cd; ${MAKE} unconfig
+    build# ./bin/myfuguitanize.sh
 
 Make a release build as usual described in ``man 8 release``.
-``fuguita51.iso`` lives in ``/usr/src/distrib/amd64/fuguita-cdfs/obj/fuguita51.iso``
+``fuguita52.iso`` stored at ``/usr/rel/fuguita52.iso``
