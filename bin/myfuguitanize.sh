@@ -1,5 +1,5 @@
 #!/bin/sh
-MYFUGUITA_DIR=/root/git/myfuguita
+MYFUGUITA_DIR=$(cd `dirname $0`; cd ..; pwd)
 SRC_DIR=/usr/src
 export MYFUGUITA_DIR
 
