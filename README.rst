@@ -9,7 +9,17 @@ FuguIta works like a charm but only available for i386.
 To support amd64, the following works were made.
 
 - port FuguIta build system to OpenBSD build system
-- intergrate FuguIta with ``make release`` on OpenBSD amd64
+- intergrate FuguIta with ``release(8)`` on OpenBSD amd64
+
+BRANCH
+------
+
+MyFuguita has branches according to OpenBSD's branches.
+
+master
+	master is for 5.3-current.
+5.2
+	5.2 is for 5.2-current
 
 REQUIREMENTS
 ------------
@@ -39,5 +49,5 @@ Integrate FuguIta with OpenBSD build system. ::
 
     build# ./bin/myfuguitanize.sh
 
-Make a release build as usual described in ``man 8 release``.
-``fuguita52.iso`` stored at ``/usr/rel/fuguita52.iso``
+Make a release build as usual described in ``man release(8)``.
+``fuguita52.iso`` is stored at ``${RELEASEDIR}/fuguita52.iso``
