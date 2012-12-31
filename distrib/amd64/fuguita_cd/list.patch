@@ -1,6 +1,6 @@
---- list.orig	Sun Nov  4 10:39:19 2012
-+++ list	Sun Nov  4 10:39:07 2012
-@@ -9,58 +9,65 @@
+--- list.orig	Mon Dec 31 09:06:37 2012
++++ list	Mon Dec 31 09:06:26 2012
+@@ -8,52 +8,58 @@
  LINK	instbin					bin/arch
  LINK	instbin					bin/cat
  LINK	instbin					bin/date
@@ -55,16 +55,16 @@
 -LINK	instbin					sbin/ping
 -LINK	instbin					sbin/restore
 -LINK	instbin					sbin/route
-+LINK	instbin					sbin/mount_vnd sbin/vnconfig
-+LINK	instbin					sbin/mount_msdos
-+LINK	instbin					sbin/mount_udf
-+LINK	instbin					sbin/newfs sbin/mount_mfs
 +#LINK	instbin					sbin/reboot sbin/halt
 +#LINK	instbin					sbin/kbd
 +#LINK	instbin					sbin/newfs
 +#LINK	instbin					sbin/ping
 +#LINK	instbin					sbin/restore
 +#LINK	instbin					sbin/route
++LINK	instbin					sbin/mount_vnd sbin/vnconfig
++LINK	instbin					sbin/mount_msdos
++LINK	instbin					sbin/mount_udf
++LINK	instbin					sbin/newfs sbin/mount_mfs
  LINK	instbin					sbin/umount
 -LINK	instbin					usr/bin/ftp
 -LINK	instbin					usr/bin/grep usr/bin/egrep usr/bin/fgrep
@@ -75,29 +75,18 @@
  LINK	instbin					usr/bin/less usr/bin/more
  LINK	instbin					usr/bin/sed
 -LINK	instbin					sbin/sysctl
--LINK	instbin					usr/mdec/installboot
 +#LINK	instbin					sbin/sysctl
-+#LINK	instbin					usr/mdec/installboot
  
-+#LINK	instbin					bin/ps
-+
  # copy the MAKEDEV script and make some devices
  SCRIPT	${DESTDIR}/dev/MAKEDEV			dev/MAKEDEV
 -SPECIAL	cd dev; sh MAKEDEV ramdisk
++#SPECIAL	cd dev; sh MAKEDEV ramdisk
 +SPECIAL	cd dev; sh MAKEDEV all
 +SPECIAL	cd dev; for i in `jot 6 0`; do sh MAKEDEV vnd$i; done
  
- # we need the contents of /usr/mdec
--COPY	${DESTDIR}/usr/mdec/biosboot		usr/mdec/biosboot
--COPY	${DESTDIR}/usr/mdec/mbr			usr/mdec/mbr
--COPY	${DESTDIR}/usr/mdec/boot		usr/mdec/boot
-+#COPY	${DESTDIR}/usr/mdec/biosboot		usr/mdec/biosboot
-+#COPY	${DESTDIR}/usr/mdec/mbr			usr/mdec/mbr
-+#COPY	${DESTDIR}/usr/mdec/boot		usr/mdec/boot
- 
- # various files that we need in /etc for the install
- COPY	${DESTDIR}/etc/group			etc/group
-@@ -70,14 +77,34 @@
+ # for fdisk(8)
+ COPY	${DESTDIR}/usr/mdec/mbr			usr/mdec/mbr
+@@ -66,14 +72,42 @@
  COPY	${CURDIR}/../../miniroot/services	etc/services
  TERMCAP	vt100,vt220,dumb			usr/share/misc/termcap
  
@@ -108,13 +97,20 @@
 +#SYMLINK	/tmp/resolv.conf.shadow			etc/resolv.conf
 +#SYMLINK	/tmp/hosts				etc/hosts
  
--# and the installation tools
+ # and the installation tools
 -SCRIPT	${CURDIR}/../../miniroot/dot.profile	.profile
 -SCRIPT	${CURDIR}/../common/install.md		install.md
 -SCRIPT	${CURDIR}/../../miniroot/upgrade.sh	upgrade
 -SCRIPT	${CURDIR}/../../miniroot/install.sh	install
 -SCRIPT	${CURDIR}/../../miniroot/install.sub	install.sub
 -SPECIAL	chmod 755 install upgrade
++#SCRIPT	${CURDIR}/../../miniroot/dot.profile	.profile
++#SCRIPT	${CURDIR}/../common/install.md		install.md
++#SCRIPT	${CURDIR}/../../miniroot/upgrade.sh	upgrade
++#SCRIPT	${CURDIR}/../../miniroot/install.sh	install
++#SCRIPT	${CURDIR}/../../miniroot/install.sub	install.sub
++#SPECIAL	chmod 755 install upgrade
++
 +# Fuguita
 +LINK	instbin					       usr/bin/lndir
 +LINK	instbin					       usr/bin/sort
