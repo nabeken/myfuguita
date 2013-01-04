@@ -23,6 +23,7 @@ ${CDROM}: fuguita.ffsimg
 	cp ${.OBJDIR}/../fuguita_cd/${BSDRD} ${.OBJDIR}/cd-dir/${OSREV}/amd64
 	cp ${DESTDIR}/usr/mdec/cdbr ${.OBJDIR}/cd-dir/${OSREV}/amd64
 	cp ${DESTDIR}/usr/mdec/cdboot ${.OBJDIR}/cd-dir/${OSREV}/amd64/cdboot
+	cp ${DESTDIR}/usr/mdec/boot ${.OBJDIR}/cd-dir/
 	cp ${MYFUGUITA_DIR}/fuguita.ffsimg ${.OBJDIR}/cd-dir/
 	mkhybrid -a -R -T -L -l -d -D -N -o ${.OBJDIR}/${CDROM} -v -v \
 	    -A "MyFuguIta ${OSREV} amd64 LiveCD" \
