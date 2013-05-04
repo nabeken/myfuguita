@@ -19,7 +19,9 @@ MyFuguita has branches according to OpenBSD's branches.
 master
 	master is for 5.3-current.
 5.2
-	5.2 is for 5.2-current
+	5.2 is for 5.2-stable
+5.3
+	5.3 is for 5.3-stable
 
 REQUIREMENTS
 ------------
