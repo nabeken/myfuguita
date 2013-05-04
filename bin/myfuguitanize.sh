@@ -25,13 +25,20 @@ cd fuguita_cd
 cp ${SRC_DIR}/distrib/amd64/common/list . || die "failed to cp distrib/common/list"
 patch -p0 < list.patch || die "failed to patch list"
 
-echo " done"
+echo " done."
 
 echo -n "Patching to GENERIC..."
 cd ${SRC_DIR}/sys/arch/amd64/conf
 cp GENERIC FUGUITA.MP || die "failed to cp GENERIC"
 patch -p0 < ${MYFUGUITA_DIR}/sys/arch/amd64/conf/FUGUITA.MP.patch || die "failed to patch FUGUITA.MP"
 
-echo " done"
+echo " done."
 
-echo "It's a time to make release."
+echo -n "Patching MFC..."
+cd ${SRC_DIR}
+for p in ${MYFUGUITA_DIR}/MFC/*.patch; do
+  patch -p1 < ${p} || die "failed to patch ${p}"
+done
+echo " done."
+
+echo "It's time to make release."
