@@ -17,7 +17,7 @@ BRANCH
 MyFuguita has branches according to OpenBSD's branches.
 
 master
-	master is for 5.3-current.
+	master is for 5.4-current.
 5.2
 	5.2 is for 5.2-stable
 5.3
