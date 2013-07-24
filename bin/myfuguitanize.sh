@@ -50,11 +50,14 @@ patch -p0 < ${MYFUGUITA_DIR}/sys/arch/amd64/conf/FUGUITA.MP.patch || die "failed
 
 echo " done."
 
-echo -n "Patching MFC..."
-cd ${SRC_DIR}
-for p in ${MYFUGUITA_DIR}/MFC/*.patch; do
-  patch -p1 < ${p} || die "failed to patch ${p}"
-done
-echo " done."
+ls -1 ${MYFUGUITA_DIR}/MFC/*.patch > /dev/null 2>&1
+if [ $? = 0 ]; then
+  echo -n "Patching MFC..."
+  cd ${SRC_DIR}
+  for p in ${MYFUGUITA_DIR}/MFC/*.patch; do
+    patch -p1 < ${p} || die "failed to patch ${p}"
+  done
+  echo " done."
+fi
 
 echo "It's time to make release."
