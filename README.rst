@@ -51,8 +51,11 @@ Integrate FuguIta with OpenBSD build system. ::
 
     build# ./bin/myfuguitanize.sh
 
-Make a release build as usual described in ``man release(8)``.
-``fuguita52.iso`` is stored at ``${RELEASEDIR}/fuguita52.iso``
+Make a release build as usual described in ``man release(8)`` or use the following::
+
+    build# ./bin/build.sh
+
+``fuguitaXX.iso`` is stored at ``${RELEASEDIR}/fuguitaXX.iso``
 
 LICENSE
 -------
