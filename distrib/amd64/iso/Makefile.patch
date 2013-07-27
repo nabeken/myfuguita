@@ -1,0 +1,18 @@
+--- Makefile.orig	Sat Jul 27 08:04:53 2013
++++ Makefile	Sat Jul 27 08:05:09 2013
+@@ -19,14 +19,13 @@
+ 
+ all: ${CDROM}
+ 
+-${CDROM}: ${BASE} ${XBASE}
++${CDROM}: ${BASE}
+ 	-rm -rf ${.OBJDIR}/cd-dir
+ 	mkdir -p ${.OBJDIR}/cd-dir/${OSREV}/${MACHINE}
+ 	mkdir -p ${.OBJDIR}/cd-dir/etc
+ 	echo "set image /${OSREV}/${MACHINE}/bsd.rd" > ${.OBJDIR}/cd-dir/etc/boot.conf
+ 
+ 	cp -p ${BASE} ${.OBJDIR}/cd-dir/${OSREV}/${MACHINE}
+-	cp -p ${XBASE} ${.OBJDIR}/cd-dir/${OSREV}/${MACHINE}
+ 
+ 	cp -p ${RELDIR}/cdbr ${.OBJDIR}/cd-dir/${OSREV}/${MACHINE}
+ 	cp -p ${RELDIR}/cdboot ${.OBJDIR}/cd-dir/${OSREV}/${MACHINE}/cdboot

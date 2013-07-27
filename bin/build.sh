@@ -30,11 +30,10 @@ cd /usr/src/etc && env DESTDIR=/ make distrib-dirs
 cd /usr/src && make build
 
 export DESTDIR=/usr/dest RELEASEDIR=/usr/rel
+export RELDIR=$RELEASEDIR
 rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
 mkdir -p ${DESTDIR} ${RELEASEDIR}
 cd /usr/src/etc && make release
 cd /usr/src/distrib/sets && sh checkflist
-
-cd ${RELEASEDIR}
-sha256 * > SHA256
-ls -l | tail -n+2 > index.txt
+cd /usr/src/distrib/`machine -a`/iso && make && make install
+cd ${RELEASEDIR} && ls -l | tail -n+2 > index.txt

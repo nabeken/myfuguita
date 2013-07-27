@@ -33,6 +33,9 @@ if [ ! -d "${SRC_DIR}/distrib" ]; then
 fi
 
 echo -n "Patching to distrib/amd64..."
+cd ${SRC_DIR}/distrib/amd64/iso
+patch -p0 < ${MYFUGUITA_DIR}/distrib/amd64/iso/Makefile.patch || die "failed to patch Makefile"
+
 cd ${SRC_DIR}/distrib/amd64
 patch -p0 < ${MYFUGUITA_DIR}/distrib/amd64/Makefile.patch || die "failed to patch Makefile"
 
