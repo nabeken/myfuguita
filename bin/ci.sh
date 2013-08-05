@@ -23,6 +23,7 @@ if [ ! -f "src.tar.gz" ]; then
   exit 1
 fi
 
+vagrant plugin install vagrant-guests-openbsd
 vagrant destroy -f || :
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
