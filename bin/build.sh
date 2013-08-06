@@ -33,6 +33,7 @@ export DESTDIR=/usr/dest RELEASEDIR=/usr/rel
 export RELDIR=$RELEASEDIR
 rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
 mkdir -p ${DESTDIR} ${RELEASEDIR}
+cp ${MYFUGUITA_DIR}/src.tar.gz ${RELEASEDIR}
 cd /usr/src/etc && make release
 cd /usr/src/distrib/sets && sh checkflist
 cd /usr/src/distrib/`machine -a`/iso && make && make install
