@@ -73,6 +73,13 @@ This script allows you to:
 
 You can archive the rel directory as artifacts.
 
+Daily Build
+------------
+
+See http://projects.tsuntsun.net/~nabeken/myfuguita/5.4/
+
+The build is brought you by FreeBSD + Vagrant + Jenkins.
+
 LICENSE
 -------
 
