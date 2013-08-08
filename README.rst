@@ -17,7 +17,7 @@ BRANCH
 MyFuguita has branches according to OpenBSD's branches.
 
 master
-	master is for 5.3-current.
+	master is for 5.4-current.
 5.2
 	5.2 is for 5.2-stable
 5.3
@@ -51,8 +51,34 @@ Integrate FuguIta with OpenBSD build system. ::
 
     build# ./bin/myfuguitanize.sh
 
-Make a release build as usual described in ``man release(8)``.
-``fuguita52.iso`` is stored at ``${RELEASEDIR}/fuguita52.iso``
+Make a release build as usual described in ``man release(8)`` or use the following::
+
+    build# ./bin/build.sh
+
+``fuguitaXX.iso`` is stored at ``${RELEASEDIR}/fuguitaXX.iso``
+
+Continuous Intergration
+-----------------------
+
+A preparing ``src.tar.gz`` is up to you.
+
+Once storing ``src.tar.gz`` in the top directory of working copy you can execute ``bin/ci.sh``.
+This script allows you to:
+
+- set up a build server with ``vagrant up``
+- rsync the working copy to the server
+- execute ``bin/myfuguita.sh`` and ``bin/build.sh`` in the server
+- rsync the release directory in the server to ``rel`` directory in the top of the working copy
+- destroy the server wtih ``vagrant destroy -f``
+
+You can archive the rel directory as artifacts.
+
+Daily Build
+------------
+
+See http://projects.tsuntsun.net/~nabeken/myfuguita/5.4/
+
+The build is brought you by FreeBSD + Vagrant + Jenkins.
 
 LICENSE
 -------
