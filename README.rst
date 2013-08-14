@@ -57,7 +57,7 @@ Make a release build as usual described in ``man release(8)`` or use the followi
 
 ``fuguitaXX.iso`` is stored at ``${RELEASEDIR}/fuguitaXX.iso``
 
-Continuous Intergration
+Continuous Integration
 -----------------------
 
 A preparing ``src.tar.gz`` is up to you.
