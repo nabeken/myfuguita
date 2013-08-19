@@ -78,7 +78,7 @@ Daily Build
 
 See http://projects.tsuntsun.net/~nabeken/myfuguita/5.4/
 
-The build is brought you by FreeBSD + Vagrant + Jenkins.
+This build is brought to you by FreeBSD + Vagrant + Jenkins.
 
 LICENSE
 -------
