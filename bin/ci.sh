@@ -14,6 +14,13 @@
 #  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 #  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #  */
+
+function die() {
+  rm ssh_config || :
+  rm -rf rel || :
+  vagrant destroy -f || :
+}
+
 set -e
 export MYFUGUITA_DIR=$(cd `dirname $0`; cd ..; pwd)
 cd ${MYFUGUITA_DIR}
@@ -29,7 +36,6 @@ vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
 rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
 ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
-ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh"
+
+ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || die
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
-rm ssh_config
-vagrant destroy -f
