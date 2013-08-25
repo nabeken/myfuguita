@@ -15,7 +15,7 @@
 #  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #  */
 
-function die() {
+die() {
   rm ssh_config || :
   rm -rf rel || :
   vagrant destroy -f || :
