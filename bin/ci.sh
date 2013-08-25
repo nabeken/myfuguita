@@ -15,7 +15,7 @@
 #  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #  */
 
-die() {
+cleanup() {
   rm ssh_config || :
   rm -rf rel || :
   vagrant destroy -f || :
@@ -30,12 +30,13 @@ if [ ! -f "src.tar.gz" ]; then
   exit 1
 fi
 
+cleanup
+
 vagrant plugin install vagrant-guests-openbsd
-vagrant destroy -f || :
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
 rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
 ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
 
-ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || die
+ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || cleanup
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
