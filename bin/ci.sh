@@ -17,7 +17,6 @@
 
 cleanup() {
   rm ssh_config || :
-  rm -rf rel || :
   vagrant destroy -f || :
 }
 
@@ -39,4 +38,8 @@ rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
 ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
 
 ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || cleanup
+
+rm -rf rel
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
+
+cleanup
