@@ -40,5 +40,3 @@ ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.t
 
 ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || cleanup
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
-
-cleanup
