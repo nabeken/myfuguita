@@ -1,0 +1,41 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox",
+      "guest_os_type": "OpenBSD_64",
+      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd54.iso",
+      "iso_checksum": "f7bf8f26efd5ec9440c742869bf7eb60",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "password",
+      "ssh_wait_timeout": "1200s",
+      "shutdown_command": "shutdown -hp now; shutdown -hp now",
+      "boot_wait": "15s",
+      "boot_command": [
+        "A<enter>"
+      ],
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--nattftpserver1", "192.168.50.10"],
+        ["modifyvm", "{{.Name}}", "--nattftpfile1", "auto_install"]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
+        ". /root/.profile",
+        "pkg_add rsync--iconv",
+        "pkg_add bash git vim--no_x11",
+        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "only": ["virtualbox"]
+    }
+  ]
+}
