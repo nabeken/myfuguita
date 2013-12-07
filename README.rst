@@ -47,7 +47,7 @@ SETTING UP A BUILDER
 
     $ git clone git://github.com/nabeken/myfuguita.git
     $ cd myfuguita/packer
-    $ packer build openbsd-5.5-20131202.json
+    $ packer build openbsd-<version>.json
 
 If packer builds successfully you can find a vagrant box ``packer_virtualbox_virtualbox.box``.
 
