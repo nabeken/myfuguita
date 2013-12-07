@@ -64,10 +64,10 @@
         "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
         ". /root/.profile",
         "pkg_add rsync--iconv",
-        "pkg_add bash git vim--no_x11",
+        "pkg_add bash wget git vim--no_x11",
         "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers",
         "install -d /home/vagrant/.ssh -m 0700",
-        "cd /tmp; ftp https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
+        "cd /tmp; wget https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
         "install -o vagrant -g vagrant -m 0400 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys"
       ]
     }
