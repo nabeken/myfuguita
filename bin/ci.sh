@@ -31,7 +31,6 @@ fi
 
 cleanup
 
-vagrant plugin install vagrant-guests-openbsd
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
 rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
