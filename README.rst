@@ -30,11 +30,9 @@ REQUIREMENTS
 
 .. _`Virtualbox`: http://www.virtualbox.org/
 .. _`Packer`: https://github.com/mitchellh/packer
-.. _`Vagrant`: https://github.com/mitchellh/vagrant
 
 - `Packer`_ to build a builder from a snapshot
 - `Virtualbox`
-- `Vagrant`_ to launch a server for unattended installer and builder
 - source codes (src.tar, sys.tar)
 
 SETTING UP BASE SYSTEM FOR LIVECD
@@ -49,7 +47,6 @@ SETTING UP A BUILDER
 
     $ git clone git://github.com/nabeken/myfuguita.git
     $ cd myfuguita/packer
-    $ vagrant up --provison
     $ packer build openbsd-5.5-20131202.json
 
 If packer builds successfully you can find a vagrant box ``packer_virtualbox_virtualbox.box``.
