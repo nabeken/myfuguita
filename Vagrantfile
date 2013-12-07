@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-Vagrant.require_plugin "vagrant-guests-openbsd"
 Vagrant.configure("2") do |config|
   config.vm.guest = :openbsd
   config.vm.box = "vagrant-openbsd-55c-20131206"
