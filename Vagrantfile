@@ -17,7 +17,7 @@
 #
 Vagrant.require_plugin "vagrant-guests-openbsd"
 Vagrant.configure("2") do |config|
-  config.vm.guest = :openbsd_v2
+  config.vm.guest = :openbsd
   config.vm.box = "vagrant-openbsd-55c-20131206"
   config.vm.box_url = "http://projects.tsuntsun.net/~nabeken/boxes/vagrant-openbsd-55c-20131206.box"
   config.vm.hostname = "build-fuguita.dev"
