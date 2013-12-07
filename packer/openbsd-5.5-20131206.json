@@ -30,7 +30,7 @@
         "<enter>",
         "<enter>",
         "<enter>",
-        "<enter>",
+        "<wait10><enter>",
         "c<enter>",
         "a<enter>",
         "<enter>",
@@ -65,7 +65,10 @@
         ". /root/.profile",
         "pkg_add rsync--iconv",
         "pkg_add bash git vim--no_x11",
-        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers",
+        "install -d /home/vagrant/.ssh -m 0700",
+        "cd /tmp; ftp https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
+        "install -o vagrant -g vagrant -m 0400 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys"
       ]
     }
   ],
