@@ -17,45 +17,49 @@ BRANCH
 MyFuguita has branches according to OpenBSD's branches.
 
 master
-	master is for 5.4-current.
+    master is for 5.5-current.
+5.4
+    5.4 is for 5.4-stable
 5.2
-	5.2 is for 5.2-stable
+    5.2 is for 5.2-stable
 5.3
-	5.3 is for 5.3-stable
+    5.3 is for 5.3-stable
 
 REQUIREMENTS
 ------------
 
-- OpenBSD running on amd64 x1
-- extracted source code (src.tar, sys.tar) in /usr/src
-- git
+.. _`Virtualbox`: http://www.virtualbox.org/
+.. _`Packer`: https://github.com/mitchellh/packer
+
+- `Packer`_ to build a builder from a snapshot
+- `Virtualbox`
+- source codes (src.tar, sys.tar)
 
 SETTING UP BASE SYSTEM FOR LIVECD
 ---------------------------------
 
 MyFuguIta now creates base image automatically based on ``/usr/dest``.
 
-SETTING UP BUILD SYSMTEM
-------------------------
+SETTING UP A BUILDER
+--------------------
 
 ::
 
-    build# cd /usr/src
-    build# tar zxpf /path/to/src.tar.gz
-    build# tar zxpf /path/to/sys.tar.gz
-    build# cd
-    build# git clone git://github.com/nabeken/myfuguita.git
-    build# cd myfuguita
+    $ git clone git://github.com/nabeken/myfuguita.git
+    $ cd myfuguita/packer
+    $ packer build openbsd-<version>.json
 
-Integrate FuguIta with OpenBSD build system. ::
+If packer builds successfully you can find a vagrant box ``packer_virtualbox_virtualbox.box``.
 
-    build# ./bin/myfuguitanize.sh
+Specify this box in ``Vagrantfile`` in the top directory like this::
 
-Make a release build as usual described in ``man release(8)`` or use the following::
-
-    build# ./bin/build.sh
-
-``fuguitaXX.iso`` is stored at ``${RELEASEDIR}/fuguitaXX.iso``
+    Vagrant.configure("2") do |config|
+      config.vm.guest = :openbsd
+      config.vm.box = "packer_virtualbox_virtualbox"
+      config.vm.box_url = "http://example.org/packer_virtualbox_virtualbox.box"
+      config.vm.hostname = "build-fuguita.dev"
+      config.vm.synced_folder "../", "/vagrant", :disabled => true
+    end
 
 Continuous Integration
 -----------------------
@@ -76,7 +80,7 @@ You can archive the rel directory as artifacts.
 Daily Build
 ------------
 
-See http://projects.tsuntsun.net/~nabeken/myfuguita/5.4/
+See http://projects.tsuntsun.net/~nabeken/myfuguita/5.5/
 
 This build is brought to you by FreeBSD + Vagrant + Jenkins.
 

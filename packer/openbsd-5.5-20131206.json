@@ -1,0 +1,81 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox",
+      "guest_os_type": "OpenBSD_64",
+      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd54.iso",
+      "iso_checksum": "b0399fc3d7371f8f9ab3d1eac865390e",
+      "iso_checksum_type": "md5",
+      "ssh_username": "root",
+      "ssh_password": "password",
+      "ssh_wait_timeout": "1200s",
+      "shutdown_command": "shutdown -hp now; shutdown -hp now",
+      "boot_wait": "15s",
+      "boot_command": [
+        "I<enter>",
+        "<enter>",
+        "build-fuguita<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "password<enter>password<enter>",
+        "<enter>",
+        "<enter>",
+        "no<enter>",
+        "vagrant<enter>",
+        "<enter>",
+        "vagrant<enter>vagrant<enter>",
+        "no<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "<wait10><enter>",
+        "c<enter>",
+        "a<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "/<enter>",
+        "a<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "w<enter>",
+        "q<enter>",
+        "http<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "-x* -game*<enter>",
+        "<enter>",
+        "<enter>",
+        "<enter>",
+        "reboot<enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
+        ". /root/.profile",
+        "pkg_add rsync--iconv",
+        "pkg_add bash wget git vim--no_x11",
+        "echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers",
+        "install -d /home/vagrant/.ssh -m 0700",
+        "cd /tmp; wget https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
+        "install -o vagrant -g vagrant -m 0400 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "only": ["virtualbox"]
+    }
+  ]
+}

@@ -15,12 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-Vagrant.require_plugin "vagrant-guests-openbsd"
-
 Vagrant.configure("2") do |config|
-  config.vm.guest = :openbsd_v2
-  config.vm.box = "vagrant-openbsd-54c-20130819"
-  config.vm.box_url = "http://projects.tsuntsun.net/~nabeken/boxes/vagrant-openbsd-54c-20130819.box"
+  config.vm.guest = :openbsd
+  config.vm.box = "vagrant-openbsd-55c-20131206"
+  config.vm.box_url = "http://projects.tsuntsun.net/~nabeken/boxes/vagrant-openbsd-55c-20131206.box"
   config.vm.hostname = "build-fuguita.dev"
-  config.vm.synced_folder "../", "/vagrant", :disabled => true
+  config.vm.synced_folder "./", "/vagrant", :disabled => true
+
+  #config.vm.provider :virtualbox do |v|
+  #  v.gui = true
+  #end
 end

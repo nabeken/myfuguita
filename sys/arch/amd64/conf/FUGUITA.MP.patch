@@ -1,5 +1,5 @@
---- FUGUITA.MP.orig	Wed Aug 14 17:58:43 2013
-+++ FUGUITA.MP	Wed Aug 14 18:02:36 2013
+--- FUGUITA.MP.orig	Tue Dec  3 23:18:57 2013
++++ FUGUITA.MP	Tue Dec  3 23:25:30 2013
 @@ -25,7 +25,7 @@
  option		NTFS		# NTFS support
  option		HIBERNATE	# Hibernate support
@@ -18,7 +18,7 @@
  isa0	at amdpcib?
  isa0	at tcpcib?
  pci*	at mainbus0
-@@ -282,7 +282,7 @@
+@@ -281,7 +281,7 @@
  #btsco*	at bthub? 		# Bluetooth audio support
  #audio*	at btsco?
  
@@ -45,7 +45,7 @@
  #esp*	at pcmcia?			# PCMCIA based NCR 53C9X SCSI
  siop*	at pci?				# NCR 538XX SCSI controllers
  #adv*	at pci?				# AdvanSys 1200A/B and ULTRA SCSI
-@@ -371,16 +371,16 @@
+@@ -372,16 +372,16 @@
  ses*	at scsibus?			# SCSI enclosure services
  uk*	at scsibus?			# unknown SCSI
  
@@ -65,7 +65,7 @@
  
  # IDE hard drives
  wd*	at wdc? flags 0x0000
-@@ -398,10 +398,10 @@
+@@ -399,10 +399,10 @@
  fxp*	at cardbus?			# Intel PRO/100 ethernet
  ne*	at pci?				# NE2000-compat ethernet
  ep*	at pci?				# 3C59x ethernet
@@ -77,9 +77,9 @@
 +#ep*	at pcmcia?			# PCMCIA based 3C5xx ethernet
 +#sm*	at pcmcia?			# PCMCIA based sm ethernet
 +#xe*	at pcmcia?			# Xircom ethernet
- #fpa*	at pci?				# DEC DEFPA FDDI
  xl*	at pci?				# 3C9xx ethernet
  xl*	at cardbus?			# 3C575/3C656 ethernet
+ rl*	at pci?				# RealTek 81[23]9 ethernet
 @@ -468,10 +468,10 @@
  bwi*	at pci?				# Broadcom AirForce (802.11b/g)
  bwi*	at cardbus?			# Broadcom AirForce (802.11b/g)
@@ -103,7 +103,7 @@
  
  # Media Independent Interface (mii) drivers
  exphy*	at mii?				# 3Com internal PHYs
-@@ -606,6 +606,16 @@
+@@ -601,6 +601,16 @@
  # mouse & keyboard multiplexor pseudo-devices
  pseudo-device	wsmux		2
  pseudo-device	crypto		1
