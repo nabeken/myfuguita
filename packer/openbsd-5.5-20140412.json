@@ -1,16 +1,6 @@
 {
   "builders": [
     {
-      "type": "virtualbox",
-      "guest_os_type": "OpenBSD_64",
-      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd54.iso",
-      "iso_checksum": "b0399fc3d7371f8f9ab3d1eac865390e",
-      "iso_checksum_type": "md5",
-      "ssh_username": "root",
-      "ssh_password": "password",
-      "ssh_wait_timeout": "1200s",
-      "shutdown_command": "shutdown -hp now; shutdown -hp now",
-      "boot_wait": "15s",
       "boot_command": [
         "I<enter>",
         "<enter>",
@@ -54,12 +44,29 @@
         "<enter>",
         "<enter>",
         "reboot<enter>"
-      ]
+      ],
+      "boot_wait": "15s",
+      "guest_os_type": "OpenBSD_64",
+      "iso_checksum": "eb59d72357c9783a9a30f3b87559e4db",
+      "iso_checksum_type": "md5",
+      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd55.iso",
+      "shutdown_command": "shutdown -hp now; shutdown -hp now",
+      "ssh_password": "password",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "1200s",
+      "type": "virtualbox-iso"
+    }
+  ],
+  "post-processors": [
+    {
+      "only": [
+        "virtualbox-iso"
+      ],
+      "type": "vagrant"
     }
   ],
   "provisioners": [
     {
-      "type": "shell",
       "inline": [
         "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
         ". /root/.profile",
@@ -69,13 +76,9 @@
         "install -d /home/vagrant/.ssh -m 0700",
         "cd /tmp; wget https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
         "install -o vagrant -g vagrant -m 0400 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys"
-      ]
-    }
-  ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "only": ["virtualbox"]
+      ],
+      "type": "shell"
     }
   ]
 }
+
