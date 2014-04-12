@@ -1,5 +1,5 @@
---- FUGUITA.MP.orig	Tue Dec  3 23:18:57 2013
-+++ FUGUITA.MP	Tue Dec  3 23:25:30 2013
+--- FUGUITA.MP.orig	Sat Apr 12 16:29:40 2014
++++ FUGUITA.MP	Sat Apr 12 16:33:26 2014
 @@ -25,7 +25,7 @@
  option		NTFS		# NTFS support
  option		HIBERNATE	# Hibernate support
@@ -18,7 +18,7 @@
  isa0	at amdpcib?
  isa0	at tcpcib?
  pci*	at mainbus0
-@@ -281,7 +281,7 @@
+@@ -283,7 +283,7 @@
  #btsco*	at bthub? 		# Bluetooth audio support
  #audio*	at btsco?
  
@@ -27,7 +27,7 @@
  
  option	WSDISPLAY_COMPAT_USL		# VT handling
  option	WSDISPLAY_COMPAT_RAWKBD		# provide raw scancodes; needed for X11
-@@ -319,7 +319,7 @@
+@@ -323,7 +323,7 @@
  com2	at isa? port 0x3e8 irq 5
  com3	at isa? disable port 0x2e8 irq 9 # (conflicts with some video cards)
  
@@ -36,16 +36,18 @@
  com*	at puc?
  
  # options CY_HW_RTS
-@@ -354,7 +354,7 @@
- iha*	at pci?				# Initio Ultra/UltraWide SCSI controllers
+@@ -359,8 +359,8 @@
  ips*	at pci?				# IBM ServeRAID controllers
  isp*	at pci?				# Qlogic ISP [12]0x0 SCSI/FibreChannel
+ #qla*	at pci?				# QLogic 2[123]xx FibreChannel
+-qle*	at pci?				# QLogic 2[45]xx FibreChannel
 -aic*	at pcmcia?			# PCMCIA Adaptec 152[02] SCSI
++#qle*	at pci?				# QLogic 2[45]xx FibreChannel
 +#aic*	at pcmcia?			# PCMCIA Adaptec 152[02] SCSI
  #esp*	at pcmcia?			# PCMCIA based NCR 53C9X SCSI
  siop*	at pci?				# NCR 538XX SCSI controllers
  #adv*	at pci?				# AdvanSys 1200A/B and ULTRA SCSI
-@@ -372,16 +372,16 @@
+@@ -378,16 +378,16 @@
  ses*	at scsibus?			# SCSI enclosure services
  uk*	at scsibus?			# unknown SCSI
  
@@ -65,7 +67,7 @@
  
  # IDE hard drives
  wd*	at wdc? flags 0x0000
-@@ -399,10 +399,10 @@
+@@ -405,10 +405,10 @@
  fxp*	at cardbus?			# Intel PRO/100 ethernet
  ne*	at pci?				# NE2000-compat ethernet
  ep*	at pci?				# 3C59x ethernet
@@ -80,7 +82,7 @@
  xl*	at pci?				# 3C9xx ethernet
  xl*	at cardbus?			# 3C575/3C656 ethernet
  rl*	at pci?				# RealTek 81[23]9 ethernet
-@@ -468,10 +468,10 @@
+@@ -474,10 +474,10 @@
  bwi*	at pci?				# Broadcom AirForce (802.11b/g)
  bwi*	at cardbus?			# Broadcom AirForce (802.11b/g)
  wi*	at pci?				# WaveLAN IEEE 802.11DS
@@ -94,7 +96,7 @@
  iwi*	at pci?				# Intel PRO/Wireless 2200BG/2915ABG
  wpi*	at pci?				# Intel PRO/Wireless 3945ABG
  iwn*	at pci?				# Intel WiFi Link 4965/5000/1000/6000
-@@ -483,7 +483,7 @@
+@@ -489,7 +489,7 @@
  pgt*	at cardbus?			# Prism54 (only full-mac varients)
  malo*	at pci?				# Marvell Libertas
  malo*	at cardbus?			# Marvell Libertas
@@ -103,7 +105,7 @@
  
  # Media Independent Interface (mii) drivers
  exphy*	at mii?				# 3Com internal PHYs
-@@ -601,6 +601,16 @@
+@@ -606,6 +606,16 @@
  # mouse & keyboard multiplexor pseudo-devices
  pseudo-device	wsmux		2
  pseudo-device	crypto		1
