@@ -38,7 +38,7 @@
         "http<enter>",
         "<enter>",
         "<enter>",
-        "<enter>",
+        "pub/OpenBSD/5.4/amd64<enter>",
         "-x* -game*<enter>",
         "<enter>",
         "<enter>",
@@ -47,9 +47,9 @@
       ],
       "boot_wait": "15s",
       "guest_os_type": "OpenBSD_64",
-      "iso_checksum": "eb59d72357c9783a9a30f3b87559e4db",
-      "iso_checksum_type": "md5",
-      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd55.iso",
+      "iso_checksum": "03124d2e38b9ac04d77be681c9c723dffb2cdd6b0688f823834c4ce1ceaa93b2",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/5.4/amd64/cd54.iso",
       "shutdown_command": "shutdown -hp now; shutdown -hp now",
       "ssh_password": "password",
       "ssh_username": "root",
@@ -68,7 +68,7 @@
   "provisioners": [
     {
       "inline": [
-        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
+        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/5.4/packages/amd64\" >> /root/.profile",
         ". /root/.profile",
         "pkg_add rsync--iconv",
         "pkg_add bash wget git vim--no_x11",

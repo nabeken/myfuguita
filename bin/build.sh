@@ -18,11 +18,11 @@ set -e
 export MYFUGUITA_DIR=$(cd `dirname $0`; cd ..; pwd)
 
 mkdir /usr/src /usr/obj || :
-${MYFUGUITA_DIR}/bin/myfuguitanize.sh
+#${MYFUGUITA_DIR}/bin/myfuguitanize.sh
 
 cd /usr/src/sys/arch/amd64/conf
-config FUGUITA.MP
-cd ../compile/FUGUITA.MP
+config GENERIC.MP
+cd ../compile/GENERIC.MP
 make clean && make
 
 cd /usr/src && make obj
