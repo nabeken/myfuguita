@@ -26,7 +26,8 @@ case "$1" in
     config GENERIC.MP
     cd ../compile/GENERIC.MP
     make clean && make
-    make install 
+    make install
+    cp /obsd /bsd
     shutdown -r now
     ;;
   base)
