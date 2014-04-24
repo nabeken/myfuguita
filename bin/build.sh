@@ -23,11 +23,11 @@ case "$1" in
     #${MYFUGUITA_DIR}/bin/myfuguitanize.sh
 
     cd /usr/src/sys/arch/amd64/conf
-    config GENERIC.MP
-    cd ../compile/GENERIC.MP
+    config GENERIC
+    cd ../compile/GENERIC
     make clean && make
     make install
-    cp /obsd /bsd
+    #cp /obsd /bsd
     shutdown -r now
     ;;
   base)
