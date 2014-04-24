@@ -17,24 +17,31 @@
 set -e
 export MYFUGUITA_DIR=$(cd `dirname $0`; cd ..; pwd)
 
-mkdir /usr/src /usr/obj || :
-#${MYFUGUITA_DIR}/bin/myfuguitanize.sh
+case "$1" in
+  kernel)
+    mkdir /usr/src /usr/obj || :
+    #${MYFUGUITA_DIR}/bin/myfuguitanize.sh
 
-cd /usr/src/sys/arch/amd64/conf
-config GENERIC.MP
-cd ../compile/GENERIC.MP
-make clean && make
+    cd /usr/src/sys/arch/amd64/conf
+    config GENERIC.MP
+    cd ../compile/GENERIC.MP
+    make clean && make
+    make install 
+    shutdown -r now
+    ;;
+  base)
+    cd /usr/src && make obj
+    cd /usr/src/etc && env DESTDIR=/ make distrib-dirs
+    cd /usr/src && make build
 
-cd /usr/src && make obj
-cd /usr/src/etc && env DESTDIR=/ make distrib-dirs
-cd /usr/src && make build
-
-export DESTDIR=/usr/dest RELEASEDIR=/usr/rel
-export RELDIR=$RELEASEDIR
-rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
-mkdir -p ${DESTDIR} ${RELEASEDIR}
-cp ${MYFUGUITA_DIR}/src.tar.gz ${RELEASEDIR}
-cd /usr/src/etc && make release
-#cd /usr/src/distrib/sets && sh checkflist
-cd /usr/src/distrib/`machine -a`/iso && make && make install
-cd ${RELEASEDIR} && ls -l | tail -n+2 > index.txt
+    export DESTDIR=/usr/dest RELEASEDIR=/usr/rel
+    export RELDIR=$RELEASEDIR
+    rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
+    mkdir -p ${DESTDIR} ${RELEASEDIR}
+    cp ${MYFUGUITA_DIR}/src.tar.gz ${RELEASEDIR}
+    cd /usr/src/etc && make release
+    #cd /usr/src/distrib/sets && sh checkflist
+    cd /usr/src/distrib/`machine -a`/iso && make && make install
+    cd ${RELEASEDIR} && ls -l | tail -n+2 > index.txt
+    ;;
+esac
