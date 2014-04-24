@@ -26,10 +26,8 @@ case "$1" in
     config GENERIC
     cd ../compile/GENERIC
     make clean && make
-    sleep 10000
-    #make install
-    #cp /obsd /bsd
-    #shutdown -r now
+    make install
+    shutdown -r now
     ;;
   base)
     cd /usr/src && make obj
