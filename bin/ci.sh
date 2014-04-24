@@ -40,17 +40,17 @@ cleanup
 
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
-rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
-ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
+rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/root/myfuguita
+ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /root/myfuguita/src.tar.gz; ls -alh /usr/src'
 
-ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh kernel" || cleanup
+ssh -F ssh_config build-fuguita "sudo /root/myfuguita/bin/build.sh kernel" || cleanup
 
 sleep 60
 
 echo "Waiting for reboot to complete"
 wait_ssh
 
-ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh base" || cleanup
+ssh -F ssh_config build-fuguita "sudo /root/myfuguita/bin/build.sh base" || cleanup
 
 rm -rf rel
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
