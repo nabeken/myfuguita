@@ -41,6 +41,7 @@ cleanup
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
 rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/var/tmp/myfuguita
+ssh -F ssh_config build-fuguita 'sudo mkdir /usr/src /usr/obj || :'
 ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /var/tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
 
 ssh -F ssh_config build-fuguita "sudo /var/tmp/myfuguita/bin/build.sh kernel" || cleanup
