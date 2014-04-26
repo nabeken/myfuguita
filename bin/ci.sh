@@ -20,6 +20,13 @@ cleanup() {
   vagrant destroy -f || :
 }
 
+wait_ssh() {
+  for i in `jot 100`; do
+    ssh -F ssh_config build-fuguita true && return 0 || sleep 5
+  done
+  return 1
+}
+
 set -e
 export MYFUGUITA_DIR=$(cd `dirname $0`; cd ..; pwd)
 cd ${MYFUGUITA_DIR}
@@ -33,10 +40,18 @@ cleanup
 
 vagrant up
 vagrant ssh-config --host build-fuguita > ssh_config
-rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/tmp/myfuguita
-ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
+rsync -avP -e 'ssh -F ssh_config' . build-fuguita:/var/tmp/myfuguita
+ssh -F ssh_config build-fuguita 'sudo tar -C /usr/src -zxpf /var/tmp/myfuguita/src.tar.gz; ls -alh /usr/src'
 
-ssh -F ssh_config build-fuguita "sudo /tmp/myfuguita/bin/build.sh" || cleanup
+ssh -F ssh_config build-fuguita "sudo /var/tmp/myfuguita/bin/build.sh kernel" || cleanup
+
+sleep 60
+
+echo "Waiting for reboot to complete"
+wait_ssh
+
+ssh -F ssh_config build-fuguita "sudo /var/tmp/myfuguita/bin/build.sh base" || cleanup
+ssh -F ssh_config build-fuguita "sudo /var/tmp/myfuguita/bin/build.sh release" || cleanup
 
 rm -rf rel
 rsync -avP -e 'ssh -F ssh_config' build-fuguita:/usr/rel/* rel
