@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = "build-fuguita.dev"
   config.vm.synced_folder "./", "/vagrant", :disabled => true
 
-  #config.vm.provider :virtualbox do |v|
-  #  v.gui = true
-  #end
+  config.vm.provider :virtualbox do |v|
+    v.gui = true if ENV['VAGRANT_GUI']
+  end
 end
