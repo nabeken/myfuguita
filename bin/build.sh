@@ -23,8 +23,8 @@ case "$1" in
     ${MYFUGUITA_DIR}/bin/myfuguitanize.sh
 
     cd /usr/src/sys/arch/amd64/conf
-    config GENERIC
-    cd ../compile/GENERIC
+    config GENERIC.MP
+    cd ../compile/GENERIC.MP
     make clean && make
     make install
     shutdown -r now
