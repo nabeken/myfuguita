@@ -34,6 +34,10 @@ case "$1" in
     cd /usr/src && make obj
     cd /usr/src/etc && env DESTDIR=/ make distrib-dirs
     cd /usr/src && make build
+
+    cd /usr/xenocara && make bootstrap
+    cd /usr/xenocara && make obj
+    cd /usr/xenocara && make build
     ;;
 
   release)
@@ -42,9 +46,13 @@ case "$1" in
     rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
     mkdir -p ${DESTDIR} ${RELEASEDIR}
     cp ${MYFUGUITA_DIR}/src.tar.gz ${RELEASEDIR}
+    cp ${MYFUGUITA_DIR}/xenocara.tar.gz ${RELEASEDIR}
     cd /usr/src/etc && make release
+    cd /usr/xenocara && make release
     #cd /usr/src/distrib/sets && sh checkflist
     cd /usr/src/distrib/`machine -a`/iso && make && make install
     cd ${RELEASEDIR} && ls -l | tail -n+2 > index.txt
     ;;
+  ports)
+    /usr/ports/infrastructure/bin/dpb -p 4 -P ${MYFUGUITA_DIR}/myfuguitaports
 esac
