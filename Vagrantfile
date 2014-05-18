@@ -17,12 +17,12 @@
 #
 Vagrant.configure("2") do |config|
   config.vm.guest = :openbsd
-  config.vm.box = "vagrant-openbsd-55c-20131206"
-  config.vm.box_url = "http://projects.tsuntsun.net/~nabeken/boxes/vagrant-openbsd-55c-20131206.box"
+  config.vm.box = "vagrant-openbsd-55"
+  config.vm.box_url = "http://projects.tsuntsun.net/~nabeken/boxes/vagrant-openbsd-55.box"
   config.vm.hostname = "build-fuguita.dev"
   config.vm.synced_folder "./", "/vagrant", :disabled => true
 
-  #config.vm.provider :virtualbox do |v|
-  #  v.gui = true
-  #end
+  config.vm.provider :virtualbox do |v|
+    v.gui = true if ENV['VAGRANT_GUI']
+  end
 end

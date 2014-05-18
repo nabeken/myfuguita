@@ -1,6 +1,6 @@
---- list.orig	Mon Dec 31 09:06:37 2012
-+++ list	Mon Dec 31 09:06:26 2012
-@@ -8,52 +8,58 @@
+--- list.orig	Sat Apr 12 16:19:15 2014
++++ list	Sat Apr 12 16:24:51 2014
+@@ -8,48 +8,52 @@
  LINK	instbin					bin/arch
  LINK	instbin					bin/cat
  LINK	instbin					bin/date
@@ -18,15 +18,17 @@
  ARGVLINK ksh					-sh
  LINK	instbin					bin/ln
  LINK	instbin					bin/ls
+ LINK	instbin					bin/md5 bin/sha256 bin/sha512
+ SPECIAL	rm bin/md5
 -LINK	instbin					bin/mkdir
 -LINK	instbin					bin/mt bin/eject
 -LINK	instbin					bin/mv
--LINK	instbin					bin/pax bin/tar bin/cpio
+-LINK	instbin					bin/pax bin/tar
 -LINK	instbin					bin/rm
 +#LINK	instbin					bin/mkdir
 +#LINK	instbin					bin/mt bin/eject
 +#LINK	instbin					bin/mv
-+#LINK	instbin					bin/pax bin/tar bin/cpio
++#LINK	instbin					bin/pax bin/tar
 +#LINK	instbin					bin/rm
  LINK	instbin					bin/sleep
 -LINK	instbin					bin/stty
@@ -55,6 +57,7 @@
 -LINK	instbin					sbin/ping
 -LINK	instbin					sbin/restore
 -LINK	instbin					sbin/route
+-LINK	instbin					sbin/sysctl
 +#LINK	instbin					sbin/reboot sbin/halt
 +#LINK	instbin					sbin/kbd
 +#LINK	instbin					sbin/newfs
@@ -65,6 +68,7 @@
 +LINK	instbin					sbin/mount_msdos
 +LINK	instbin					sbin/mount_udf
 +LINK	instbin					sbin/newfs sbin/mount_mfs
++#LINK	instbin					sbin/sysctl
  LINK	instbin					sbin/umount
 -LINK	instbin					usr/bin/ftp
 -LINK	instbin					usr/bin/grep usr/bin/egrep usr/bin/fgrep
@@ -74,8 +78,8 @@
 +#LINK	instbin					usr/bin/gzip usr/bin/gunzip usr/bin/gzcat
  LINK	instbin					usr/bin/less usr/bin/more
  LINK	instbin					usr/bin/sed
--LINK	instbin					sbin/sysctl
-+#LINK	instbin					sbin/sysctl
+ LINK	instbin					usr/bin/signify
+@@ -57,7 +61,9 @@
  
  # copy the MAKEDEV script and make some devices
  SCRIPT	${DESTDIR}/dev/MAKEDEV			dev/MAKEDEV
@@ -86,7 +90,7 @@
  
  # for fdisk(8)
  COPY	${DESTDIR}/usr/mdec/mbr			usr/mdec/mbr
-@@ -66,14 +72,42 @@
+@@ -71,14 +77,42 @@
  COPY	${CURDIR}/../../miniroot/services	etc/services
  TERMCAP	vt100,vt220,dumb			usr/share/misc/termcap
  

@@ -1,4 +1,5 @@
 fuguita.ffsimg
 .vagrant
 *.swp
-src.tar.gz
+*.tar.gz
+rel/

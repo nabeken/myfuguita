@@ -1,16 +1,6 @@
 {
   "builders": [
     {
-      "type": "virtualbox",
-      "guest_os_type": "OpenBSD_64",
-      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/amd64/cd54.iso",
-      "iso_checksum": "b0399fc3d7371f8f9ab3d1eac865390e",
-      "iso_checksum_type": "md5",
-      "ssh_username": "root",
-      "ssh_password": "password",
-      "ssh_wait_timeout": "1200s",
-      "shutdown_command": "shutdown -hp now; shutdown -hp now",
-      "boot_wait": "15s",
       "boot_command": [
         "I<enter>",
         "<enter>",
@@ -48,20 +38,37 @@
         "http<enter>",
         "<enter>",
         "<enter>",
-        "<enter>",
+        "pub/OpenBSD/5.5/amd64<enter>",
         "-x* -game*<enter>",
         "<enter>",
         "<enter>",
         "<enter>",
         "reboot<enter>"
-      ]
+      ],
+      "boot_wait": "15s",
+      "guest_os_type": "OpenBSD_64",
+      "iso_checksum": "5fae0fb4ea2c98cfdd0ea0bd8d7ba5b26f2d8608a3a355304c5e49fe08ad6999",
+      "iso_checksum_type": "sha256",
+      "iso_url": "http://ftp.iij.ad.jp/pub/OpenBSD/5.5/amd64/cd55.iso",
+      "shutdown_command": "shutdown -hp now; shutdown -hp now",
+      "ssh_password": "password",
+      "ssh_username": "root",
+      "ssh_wait_timeout": "1200s",
+      "type": "virtualbox-iso"
+    }
+  ],
+  "post-processors": [
+    {
+      "only": [
+        "virtualbox-iso"
+      ],
+      "type": "vagrant"
     }
   ],
   "provisioners": [
     {
-      "type": "shell",
       "inline": [
-        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/snapshots/packages/amd64\" >> /root/.profile",
+        "echo export PKG_PATH=\"http://ftp.iij.ad.jp/pub/OpenBSD/5.5/packages/amd64\" >> /root/.profile",
         ". /root/.profile",
         "pkg_add rsync--iconv",
         "pkg_add bash wget git vim--no_x11",
@@ -69,13 +76,9 @@
         "install -d /home/vagrant/.ssh -m 0700",
         "cd /tmp; wget https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub",
         "install -o vagrant -g vagrant -m 0400 /tmp/vagrant.pub /home/vagrant/.ssh/authorized_keys"
-      ]
-    }
-  ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "only": ["virtualbox"]
+      ],
+      "type": "shell"
     }
   ]
 }
+

@@ -1,0 +1,68 @@
+diff -urN distrib.orig/special/Makefile distrib/special/Makefile
+--- distrib.orig/special/Makefile	Sun Apr 27 12:53:32 2014
++++ distrib/special/Makefile	Sun Apr 27 12:59:21 2014
+@@ -3,7 +3,8 @@
+ SUBDIR=	libstubs \
+ 	arch date dd dhclient dmesg ed ftp grep gzip ifconfig init \
+ 	installboot kbd less md5 more mt newfs pax ping restore \
+-	sed sysctl signify ztsscale umount
++	sed sysctl signify ztsscale umount \
++	lndir sort paste touch dirname basename
+ 
+ install:
+ 
+diff -urN distrib.orig/special/basename/Makefile distrib/special/basename/Makefile
+--- distrib.orig/special/basename/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/basename/Makefile	Sun Apr 27 12:55:46 2014
+@@ -0,0 +1,5 @@
++PROG=	basename
++
++.PATH:  ${.CURDIR}/../../../usr.bin/basename
++
++.include <bsd.prog.mk>
+diff -urN distrib.orig/special/dirname/Makefile distrib/special/dirname/Makefile
+--- distrib.orig/special/dirname/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/dirname/Makefile	Sun Apr 27 12:55:33 2014
+@@ -0,0 +1,5 @@
++PROG=	dirname
++
++.PATH:  ${.CURDIR}/../../../usr.bin/dirname
++
++.include <bsd.prog.mk>
+diff -urN distrib.orig/special/lndir/Makefile distrib/special/lndir/Makefile
+--- distrib.orig/special/lndir/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/lndir/Makefile	Sun Apr 27 12:54:44 2014
+@@ -0,0 +1,5 @@
++PROG=	lndir
++
++.PATH:  ${.CURDIR}/../../../usr.bin/lndir
++
++.include <bsd.prog.mk>
+diff -urN distrib.orig/special/paste/Makefile distrib/special/paste/Makefile
+--- distrib.orig/special/paste/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/paste/Makefile	Sun Apr 27 12:55:00 2014
+@@ -0,0 +1,5 @@
++PROG=	paste
++
++.PATH:  ${.CURDIR}/../../../usr.bin/paste
++
++.include <bsd.prog.mk>
+diff -urN distrib.orig/special/sort/Makefile distrib/special/sort/Makefile
+--- distrib.orig/special/sort/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/sort/Makefile	Sun Apr 27 12:59:53 2014
+@@ -0,0 +1,6 @@
++PROG=	sort
++SRCS=	append.c fields.c files.c fsort.c init.c msort.c sort.c tmp.c
++
++.PATH:  ${.CURDIR}/../../../usr.bin/sort
++
++.include <bsd.prog.mk>
+diff -urN distrib.orig/special/touch/Makefile distrib/special/touch/Makefile
+--- distrib.orig/special/touch/Makefile	Thu Jan  1 09:00:00 1970
++++ distrib/special/touch/Makefile	Sun Apr 27 12:55:18 2014
+@@ -0,0 +1,5 @@
++PROG=	touch
++
++.PATH:  ${.CURDIR}/../../../usr.bin/touch
++
++.include <bsd.prog.mk>

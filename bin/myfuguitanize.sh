@@ -46,6 +46,10 @@ patch -p0 < list.patch || die "failed to patch list"
 
 echo " done."
 
+echo -n "Patching to distrib/special..."
+cd ${SRC_DIR}
+patch -p0 < ${MYFUGUITA_DIR}/distrib/special.patch || die "failed to patch special.patch"
+
 echo -n "Patching to GENERIC..."
 cd ${SRC_DIR}/sys/arch/amd64/conf
 cp GENERIC FUGUITA.MP || die "failed to cp GENERIC"
