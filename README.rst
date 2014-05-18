@@ -18,6 +18,8 @@ MyFuguita has branches according to OpenBSD's branches.
 
 master
     master is for 5.5-current.
+5.5
+    5.5 is for 5.5-stable
 5.4
     5.4 is for 5.4-stable
 5.2
@@ -33,12 +35,17 @@ REQUIREMENTS
 
 - `Packer`_ to build a builder from a snapshot
 - `Virtualbox`
-- source codes (src.tar, sys.tar)
+- source codes (src.tar.gz, sys.tar.gz, xenocara.tar.gz)
 
 SETTING UP BASE SYSTEM FOR LIVECD
 ---------------------------------
 
 MyFuguIta now creates base image automatically based on ``/usr/dest``.
+
+SETTING UP PRE-BUILT PACKAGES FOR LIVECD
+----------------------------------------
+
+MyFuguIta now builds packages listed in ``myfuguitaports`` using ``dpb(1)``.
 
 SETTING UP A BUILDER
 --------------------
