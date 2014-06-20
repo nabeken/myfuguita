@@ -42,7 +42,7 @@ case "$1" in
 
   release)
     export DESTDIR=/usr/dest RELEASEDIR=/usr/rel
-    export RELDIR=$RELEASEDIR
+    export RELDIR=$RELEASEDIR RELXDIR=$RELEASEDIR
     rm -rf ${DESTDIR} ${RELEASEDIR} ${WORKSPACE}/rel || :
     mkdir -p ${DESTDIR} ${RELEASEDIR}
     cp ${MYFUGUITA_DIR}/src.tar.gz ${RELEASEDIR}
