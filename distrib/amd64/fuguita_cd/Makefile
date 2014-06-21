@@ -6,6 +6,7 @@ FLOPPYSIZE=11520
 FLOPPYTYPE=floppy576
 XNAME=fuguita
 NOFS=1
+NOBSDRD=1
 
 .include "${.CURDIR}/../common/Makefile.inc"
 

@@ -1,7 +1,7 @@
 MyFuguIta - Fuguita ported to OpenBSD build system to support amd64/i386
 ========================================================================
 
-.. _`FuguIta`: http://kaw.ath.cx/openbsd/index.php?FuguIta
+.. _`FuguIta`: http://fuguita.ddo.jp/openbsd/index.php?FuguIta
 
 `FuguIta`_ is the LiveCD/LiveUSB system developed by Yoshihiro Kawamata.
 FuguIta works like a charm but only available for i386.
